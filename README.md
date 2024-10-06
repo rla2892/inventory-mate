@@ -38,6 +38,13 @@
 npm run dev
 ```
 
+## 테스트 (Tests)
+
+테스트를 실행하려면 다음 명령어를 사용하세요:
+```bash
+npm test
+```
+
 ## 라이센스 (License)
 
 이 프로젝트는 Apache License 2.0을 따릅니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참고하세요.
