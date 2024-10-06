@@ -1,0 +1,20 @@
+{
+    // 1lIi0oO
+    "editor.fontFamily": "JetBrains Mono, 'Courier New', monospace", // 폰트 설정
+    /*
+    JetBrains Mono
+    Fira Code
+  */
+    "workbench.colorTheme": "Default Dark+", // 테마 설정
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "always" // 저장 시 ESLint 규칙에 맞춰 자동 수정
+    },
+    "eslint.validate": [
+        "javascript", // 자바스크립트 파일에서 ESLint 활성화
+        "javascriptreact", // React 자바스크립트 파일에서 ESLint 활성화
+        "typescript", // 타입스크립트 파일에서 ESLint 활성화
+        "typescriptreact", // React 타입스크립트 파일에서 ESLint 활성화
+    ],
+    "eslint.run": "onType",
+    "files.eol": "\n" // 타이핑 중에 ESLint를 실시간으로 적용
+}
