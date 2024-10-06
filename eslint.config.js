@@ -11,6 +11,7 @@ module.exports = [
             globals: {
                 ...globals.node, // Add Node.js globals
                 ...globals.browser, // Add browser globals
+                ...globals.jest, // Add jest globals
                 React: "readonly", // React is read-only
             },
             parser: typescriptParser, // Use TypeScript parser
