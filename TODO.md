@@ -2,7 +2,6 @@
 
 ## 프로젝트 초기 설정 (Project Initial Setup)
 
-- [ ] eslint 설정
 - [ ] 데이터베이스 설정
   - [ ] SQLite 설정
   - [ ] 모델 설정
