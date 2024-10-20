@@ -1,4 +1,5 @@
 import InventoryStatus from "@/components/InventoryStatus"
+import OrderStatus from "@/components/OrderStatus"
 
 export default function Home() {
     return (
@@ -9,8 +10,7 @@ export default function Home() {
                     <InventoryStatus />
                 </section>
                 <section>
-                    <h2>주문 현황</h2>
-                    {/* 주문 현황을 표시하는 컴포넌트 추가 */}
+                    <OrderStatus />
                 </section>
                 <button>
                     주문 생성

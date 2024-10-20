@@ -1,14 +1,20 @@
 import { PrismaClient } from "@prisma/client"
-import { getUserById, getUserByEmail, getInventoryStatus } from "../src/utils/db"
+import { getUserById, getUserByEmail, getInventoryStatus, getOrderStatus } from "../src/utils/db"
 
 const prisma = new PrismaClient()
+
+const testUserId1 = "01JANMEQN646YBNXRZD9EW7RJ0"
+const testUserId2 = "01JANMEQN646YBNXRZD9EW7RJ1"
+const testProductId = "01JANMEQN646YBNXRZD9EW7RJ2"
+const testSalesOrderId = "01JANMEQN646YBNXRZD9EW7RJ3"
+const testSalesOrderItemId = "01JANMEQN646YBNXRZD9EW7RJ4"
 
 describe("Database Utility Functions", () => {
     beforeAll(async () => {
         // 테스트용 사용자 생성
         await prisma.user.create({
             data: {
-                id: "01J9HWB3NG9TCMVXARPN7CP4D6",
+                id: testUserId1,
                 email: "test@example.com",
                 password: "password123",
                 name: "Test User",
@@ -17,7 +23,7 @@ describe("Database Utility Functions", () => {
         // 테스트용 사용자 생성 2
         await prisma.user.create({
             data: {
-                id: "01J9HWB3NG9TCMVXARPN7CP4D7",
+                id: testUserId2,
                 email: "test2@example.com",
                 password: "password123",
                 name: "Test User 2",
@@ -26,40 +32,70 @@ describe("Database Utility Functions", () => {
         // 테스트용 상품 생성
         await prisma.product.create({
             data: {
-                id: "01J9HWB3NG9TCMVXARPN7CP4D8",
+                id: testProductId,
                 name: "Test Product",
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
         })
+        // 테스트용 판매 주문 생성
+        await prisma.salesOrder.create({
+            data: {
+                id: testSalesOrderId,
+                userId: testUserId1,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+        })
+        // 테스트용 판매 주문 항목 생성
+        await prisma.salesOrderItem.create({
+            data: {
+                id: testSalesOrderItemId,
+                salesOrderId: testSalesOrderId,
+                productId: testProductId,
+                quantity: 5,
+            },
+        })
     })
 
     afterAll(async () => {
+        // 테스트용 판매 주문 항목 삭제
+        await prisma.salesOrderItem.delete({
+            where: {
+                id: testSalesOrderItemId,
+            },
+        })
+        // 테스트용 판매 주문 삭제
+        await prisma.salesOrder.delete({
+            where: {
+                id: testSalesOrderId,
+            },
+        })
         // 테스트용 사용자 삭제
         await prisma.user.delete({
             where: {
-                id: "01J9HWB3NG9TCMVXARPN7CP4D6",
+                id: testUserId1,
             },
         })
         // 테스트용 사용자 삭제 2
         await prisma.user.delete({
             where: {
-                id: "01J9HWB3NG9TCMVXARPN7CP4D7",
+                id: testUserId2,
             },
         })
         // 테스트용 상품 삭제
         await prisma.product.delete({
             where: {
-                id: "01J9HWB3NG9TCMVXARPN7CP4D8",
+                id: testProductId,
             },
         })
     })
 
     it("should return a user for a valid ID", async () => {
-        const user = await getUserById("01J9HWB3NG9TCMVXARPN7CP4D6")
+        const user = await getUserById(testUserId1)
         expect(user).not.toBeNull()
         expect(user?.email).toBe("test@example.com")
-        const user2 = await getUserById("01J9HWB3NG9TCMVXARPN7CP4D7")
+        const user2 = await getUserById(testUserId2)
         expect(user2).not.toBeNull()
         expect(user2?.email).toBe("test2@example.com")
     })
@@ -72,7 +108,7 @@ describe("Database Utility Functions", () => {
     it("should return a user for a valid email", async () => {
         const user = await getUserByEmail("test@example.com")
         expect(user).not.toBeNull()
-        expect(user?.id).toBe("01J9HWB3NG9TCMVXARPN7CP4D6")
+        expect(user?.id).toBe(testUserId1)
     })
 
     it("should return null for an invalid email", async () => {
@@ -89,6 +125,22 @@ describe("Database Utility Functions", () => {
         inventoryStatus.forEach(status => {
             expect(status.id).toBeDefined()
             expect(status.currentStock).toBeDefined()
+        })
+    })
+
+    it("should return order status for valid sales orders", async () => {
+        const orderStatus = await getOrderStatus()
+        expect(orderStatus).not.toBeNull()
+        expect(orderStatus.length).toBeGreaterThan(0)
+        orderStatus.forEach(order => {
+            expect(order.id).toBeDefined()
+            expect(order.userId).toBeDefined()
+            expect(order.items.length).toBeGreaterThan(0)
+            order.items.forEach(item => {
+                expect(item.productId).toBeDefined()
+                expect(item.productName).toBeDefined()
+                expect(item.quantity).toBeGreaterThan(0)
+            })
         })
     })
 })

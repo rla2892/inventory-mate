@@ -82,3 +82,32 @@ export async function getInventoryStatus() {
     }
 }
 
+export async function getOrderStatus() {
+    try {
+        const orders = await prisma.salesOrder.findMany({
+            include: {
+                user: true,
+                salesOrderItems: {
+                    include: {
+                        product: true,
+                    },
+                },
+            },
+        })
+
+        return orders.map(order => ({
+            id: order.id,
+            userId: order.userId,
+            items: order.salesOrderItems.map(item => ({
+                productId: item.productId,
+                productName: item.product.name,
+                quantity: item.quantity,
+            })),
+        }))
+    } catch (error) {
+        console.error("Error fetching order status:", error)
+        return []
+    } finally {
+        await prisma.$disconnect()
+    }
+}
