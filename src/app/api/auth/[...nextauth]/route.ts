@@ -1,9 +1,6 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { PrismaClient } from "@prisma/client"
 import { getUserByEmail } from "@/utils/db"
-
-const prisma = new PrismaClient()
 
 const handler = NextAuth({
     providers: [
@@ -14,16 +11,11 @@ const handler = NextAuth({
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials) {
-                try {
-                    const user = await getUserByEmail(credentials?.email || "")
+                const user = await getUserByEmail(credentials?.email || "")
 
-                    if (user && user.password === credentials?.password) {
-                        return user
-                    } else {
-                        return null
-                    }
-                } catch (error) {
-                    console.error("Error authorizing user:", error)
+                if (user && user.password === credentials?.password) {
+                    return user
+                } else {
                     return null
                 }
             }
